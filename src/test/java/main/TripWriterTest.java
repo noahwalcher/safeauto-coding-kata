@@ -32,6 +32,23 @@ public class TripWriterTest {
 		Assert.assertFalse(tw.checkIfExists("Driver,Noah"));
 	}
 	
+	@Test
+	public void adding_2_trips_with_consecutive_ids_then_removing_one() {
+		tw.addTrip("AddTrip noah,2020-02-03 12:12,2020-02-03 12:12,24");
+		tw.addTrip("AddTrip noah,2020-02-03 12:12,2020-02-03 12:12,24");
+		tw.removeTrip("RemoveTrip 1");
+	}
+	
+	@Test
+	public void getting_1_back_as_highest_trip_id() {
+		Assert.assertEquals(1, tw.getHighestId());
+	}
+	
+	@Test
+	public void generate_report() {
+		tw.generateReport();
+	}
+	
 	
 	
 }

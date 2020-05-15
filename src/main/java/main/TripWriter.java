@@ -116,8 +116,8 @@ public class TripWriter {
 	}
 	// This method runs through the text file and finds the highest current trip id
 	// and returns and int 1 greater.
-	private int getHighestId() {
-		int highest = 0;
+	public int getHighestId() {
+		int highest = 1;
 		String line;
 		try {
 			Scanner fileScanner = new Scanner(file);
@@ -201,7 +201,7 @@ public class TripWriter {
 	public void removeTrip(String command) {
 		String remove = "Trip," + command.substring(11);
 		editFile(remove);
-		System.out.println("This trip was successfully removed");
+		System.out.println("This trip was successfully removed.");
 	}
 
 	// Generates a final report from the text file. Will also end the program.
