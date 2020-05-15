@@ -66,24 +66,20 @@ public class TripWriter {
 
 	/*
 	 * This method is used to remove lines from the text file. It does so by
-	 * creating a temporary text file and only copying over lines that you don't
+	 * creating a list of Strings and only copying over lines that you don't
 	 * want deleted.
 	 */
 	public void editFile(String remove) {
 		try {
-			// The temporary text file
-			File tempFile = new File("Temp.txt");
-
+			List<String> lines = new ArrayList<String>();
 			BufferedReader reader = new BufferedReader(new FileReader(file));
-			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-			// Make sure the buffered writer from useFileWriter method is closed in order to
-			// be able to save the new file
+		
+			// Make sure the buffered writer from useFileWriter method is closed from earlier
 			if (isOpen) {
 				bw.close();
+				fw.close();
 				isOpen = false;
 			}
-
 			String lineToRemove = remove;
 			String currentLine;
 
@@ -95,24 +91,29 @@ public class TripWriter {
 				if (trimmedLine.equals(lineToRemove)
 						// Or checks to see if line starts with our desired text. This is for lines that
 						// start with Trip,[id].
-						|| (trimmedLine.startsWith(remove) && trimmedLine.startsWith("Trip")))
+						|| (trimmedLine.startsWith(remove) && trimmedLine.startsWith("Trip"))
+						//Lastly checks if there is an empty line to avoid copying over.
+						|| trimmedLine.equals(""))
 					continue;
-				writer.write(currentLine + System.getProperty("line.separator"));
+				
+				lines.add(currentLine + System.getProperty("line.separator"));
 			}
-			writer.close();
+			//Create a new writer that is not in append mode.
+			fw = new FileWriter(file, false);
+			bw = new BufferedWriter(fw);
+			for (String line : lines) {
+				bw.write(line);
+				bw.flush();
+			}
+			System.out.println("Your change is complete.");
 			reader.close();
-			file.delete();
-
-			// Attempts to rename the temporary file to the original
-			if (!tempFile.renameTo(file))
-				System.out.print("Unable to rename the file!");
+			bw.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
 	// This method runs through the text file and finds the highest current trip id
 	// and returns and int 1 greater.
 	private int getHighestId() {
@@ -156,7 +157,6 @@ public class TripWriter {
 		String name = driver.substring(13);
 		String remove = "Driver," + name;
 		editFile(remove);
-		System.out.println("Driver " + name + " was successfully removed.");
 	}
 
 	// Formats and adds a Trip line to the text file.
